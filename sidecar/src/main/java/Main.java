@@ -21,24 +21,37 @@
  * THE SOFTWARE.
  */
 
-import java.util.ArrayList;
+import java.time.ZoneId;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
+
 
 public class Main {
+
     public static void main(String args[]) throws Exception {
-        List<SideCarApp> sidecars = new ArrayList<SideCarApp>();
 
-        final Map<String,String> readerProps = new HashMap<String,String>();
-        readerProps.put("path","/Desktop");
-        SideCarApp reader = new ReaderApp();
-        reader.setProps(readerProps);
-        sidecars.add(reader);
+        String current = new java.io.File(".").getCanonicalPath();
+        String location = "Test";
+        Map<String, String> resultMap = new HashMap<String, String>();
+        Map<String, String> EchoAppMap = new HashMap<String, String>();
 
-        for (SideCarApp app: sidecars) {
-            app.call();
-        }
+        resultMap.put("path", current);
+        resultMap.put("location", location);
+
+        EchoAppMap.put("zoneId", ZoneId.of("America/Sao_Paulo").toString());
+        EchoAppMap.put("delay", "0");
+        EchoAppMap.put("period", "20000");
+
+        WriterApp writer = new WriterApp();
+        writer.setProps(resultMap);
+        writer.call();
+        EchoApp echo = new EchoApp();
+        echo.setProps(EchoAppMap);
+        echo.call();
+        ReaderApp reader = new ReaderApp();
+        reader.setProps(resultMap);
+        reader.call();
+
     }
 }
+
